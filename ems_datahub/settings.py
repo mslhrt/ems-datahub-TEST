@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'ems_dashboard',
+    'ems_datahub.ems_dashboard',
 ]
 
 MIDDLEWARE = [
