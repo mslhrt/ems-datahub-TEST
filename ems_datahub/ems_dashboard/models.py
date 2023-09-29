@@ -24,6 +24,9 @@ class Call(models.Model):
 class Agency(models.Model):
     AGENCY_CHOICES = [
         ('JRMA', 'JRMA'),
+        ('PFD', 'Peterborough Fire Department'),
+        ('WFD', 'Winchendon Fire Department'),
+        ('CEMS', 'Cheshire EMS'),
     ]  
     name = models.CharField(max_length=100, choices=AGENCY_CHOICES, default='JRMA')
 
