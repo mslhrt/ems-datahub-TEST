@@ -1,3 +1,6 @@
 from django.contrib import admin
+from .models import Call, Agency, Town
 
-# Register your models here.
+admin.site.register(Call)
+admin.site.register(Agency)
+admin.site.register(Town)
