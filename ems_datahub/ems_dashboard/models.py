@@ -28,10 +28,10 @@ class Agency(models.Model):
         ('WFD', 'Winchendon Fire Department'),
         ('CEMS', 'Cheshire EMS'),
     ]  
-    name = models.CharField(max_length=100, choices=AGENCY_CHOICES, default='JRMA')
+    name = models.CharField(max_length=100, choices=AGENCY_CHOICES)
 
     def __str__(self):
-        return self.name
+        return self.get_name_display
 
 class Town(models.Model):
     TOWN_CHOICES = [
@@ -43,4 +43,4 @@ class Town(models.Model):
     name = models.CharField(max_length=100, choices=TOWN_CHOICES)
 
     def __str__(self):
-        return self.name
+        return self.get_name_display
