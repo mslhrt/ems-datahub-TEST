@@ -1,0 +1,11 @@
+{% extends 'ems_dashboard/base_generic.html' %}
+
+{% block content %}
+  <h2>Delete Call</h2>
+  <form method="post">
+    {% csrf_token %}
+    <p>Are you sure you want to delete this call?</p>
+    <button type="submit">Yes, delete</button>
+    <a href="{% url 'ems_dashboard:list_calls' %}">Cancel</a>
+  </form>
+{% endblock %}
