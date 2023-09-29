@@ -1,20 +1,20 @@
 {% extends 'base_generic.html' %}
 
 {% block content %}
-  <h1>Dashboard</h1>
+  <h2>Call List</h2>
   <table>
     <tr>
       <th>Date</th>
       <th>Time</th>
       <th>Type of Call</th>
-      <!-- Other columns as needed -->
+      <!-- Add other fields as needed -->
     </tr>
-    {% for call in call_data %}
+    {% for call in calls %}
       <tr>
         <td>{{ call.date }}</td>
         <td>{{ call.time }}</td>
         <td>{{ call.type_of_call }}</td>
-        <!-- Other columns as needed -->
+        <!-- Add other fields as needed -->
       </tr>
     {% endfor %}
   </table>
