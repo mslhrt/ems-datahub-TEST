@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from .models import Call
 from .forms import CallForm
 from django.urls import reverse
+from django.urls import reverse_lazy
+from django.views.generic.edit import UpdateView
 
 def list_calls(request):
     calls = Call.objects.all().order_by('-date', '-time')  # Order by date and time in descending order
@@ -16,3 +18,11 @@ def add_call(request):
     else:
         form = CallForm()
     return render(request, 'ems_dashboard/add_call.html', {'form': form})
+
+class CallUpdateView(UpdateView):
+    model = Call
+    form_class = CallForm
+    template_name = 'ems_dashboard/edit_call.html'
+    
+    def get_success_url(self):
+        return reverse_lazy('ems_dashboard:list_calls')

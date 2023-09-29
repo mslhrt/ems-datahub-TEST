@@ -15,6 +15,7 @@
         <td>{{ call.time|time:"H:i" }}</td>
         <td>{{ call.type_of_call }}</td>
         <!-- Add other fields as needed -->
+        <td><a href="{% url 'ems_dashboard:edit_call' call.id %}">Edit</a></td>  <!-- Link to Edit View -->
       </tr>
     {% endfor %}
   </table>
