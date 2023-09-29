@@ -35,3 +35,6 @@ class Town(models.Model):
         ('New Ipswich', 'New Ipswich'),
     ]
     name = models.CharField(max_length=100, choices=TOWN_CHOICES)
+
+    def __str__(self):
+        return self.name
