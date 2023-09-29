@@ -11,8 +11,8 @@
     </tr>
     {% for call in calls %}
       <tr>
-        <td>{{ call.date }}</td>
-        <td>{{ call.time }}</td>
+        <td>{{ call.date|date:"m/d/Y" }}</td>
+        <td>{{ call.time|time:"H:i" }}</td>
         <td>{{ call.type_of_call }}</td>
         <!-- Add other fields as needed -->
       </tr>
