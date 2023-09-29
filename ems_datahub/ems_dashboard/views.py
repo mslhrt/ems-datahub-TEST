@@ -4,7 +4,7 @@ from .forms import CallForm
 from django.urls import reverse
 
 def list_calls(request):
-    calls = Call.objects.all()
+    calls = Call.objects.all().order_by('-date', '-time')  # Order by date and time in descending order
     return render(request, 'ems_dashboard/list_calls.html', {'calls': calls})
 
 def add_call(request):
