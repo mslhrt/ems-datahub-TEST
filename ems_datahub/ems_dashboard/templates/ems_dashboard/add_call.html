@@ -3,8 +3,8 @@
 {% block content %}
   <h2>Add Call</h2>
   <form method="post">
-    {% csrf_
-    token %}{{ form.as_p }}
+    {% csrf_token %}
+    {{ form.as_p }}
     <button type="submit">Save</button>
   </form>
 {% endblock %}
