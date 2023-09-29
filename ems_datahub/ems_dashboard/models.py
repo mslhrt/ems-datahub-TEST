@@ -30,6 +30,9 @@ class Agency(models.Model):
     ]  
     name = models.CharField(max_length=100, choices=AGENCY_CHOICES, default='JRMA')
 
+    def __str__(self):
+        return self.name
+
 class Town(models.Model):
     TOWN_CHOICES = [
         ('Jaffrey', 'Jaffrey'),
