@@ -20,6 +20,6 @@ from ems_datahub.ems_dashboard.views import list_calls  # Import the views from 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('ems_dashboard/', include('ems_datahub.ems_dashboard.urls')),
+    path('ems_dashboard/', include('ems_datahub.ems_dashboard.urls', namespace='ems_dashboard')),
     path('', list_calls, name='home'),  # Set the landing page to list_calls view
 ]
