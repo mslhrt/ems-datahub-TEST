@@ -16,8 +16,10 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import include, path
+from ems_dashboard import views as ems_views  # Import the views from ems_dashboard app
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('ems_dashboard/', include('ems_datahub.ems_dashboard.urls')),
+    path('ems_dashboard/', include('ems_dashboard.urls')),  # Include app URLs
+    path('', ems_views.list_calls, name='home'),  # Set the landing page to list_calls view
 ]
