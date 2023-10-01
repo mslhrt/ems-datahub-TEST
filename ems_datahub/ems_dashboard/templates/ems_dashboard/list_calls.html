@@ -5,7 +5,6 @@
 <table class="table table-bordered table-hover">
   <thead>
     <tr>
-      <th scope="col"><input type="checkbox" id="select-all" /></th> <!-- Checkbox to select all rows -->
       <th scope="col">Date</th>
       <th scope="col">Time</th>
       <th scope="col">Type of Call</th>
@@ -15,7 +14,6 @@
   <tbody>
     {% for call in calls %}
     <tr>
-      <td><input type="checkbox" class="select-row" data-id="{{ call.id }}" /></td> <!-- Checkbox for each row -->
       <td>{{ call.date }}</td>
       <td>{{ call.time }}</td>
       <td>{{ call.type_of_call }}</td>
