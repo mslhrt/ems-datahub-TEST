@@ -1,27 +1,10 @@
 {% extends 'ems_dashboard/base_generic.html' %}
 
 {% block content %}
-<canvas id="myChart" width="400" height="200"></canvas>
+<canvas id="myChart" width="400" height="200" 
+        data-data="{{ data|safe }}" 
+        data-options="{{ options|safe }}">
+</canvas>
 
-<script type="text/javascript">
-// Log Data and Options
-console.log('Data:', {{ data|safe }});
-var options = {{ options|json_script:"options" }};
-console.log('Options:', options);
-
-// Check if Chart is defined
-if (typeof Chart === 'undefined') {
-    console.error('Chart.js is not loaded');
-} else {
-    // Get the context of the canvas element we want to select
-    var ctx = document.getElementById('myChart').getContext('2d');
-    
-    // Create a new chart
-    var myChart = new Chart(ctx, {
-        type: 'bar',
-        data: {{ data|safe }},
-        options: options
-    });
-}
-</script>
+<script src="{% static 'ems_dashboard/dashboard.js' %}" type="text/javascript"></script>
 {% endblock %}
