@@ -3,16 +3,20 @@
 {% block content %}
 <canvas id="myChart" width="400" height="200"></canvas>
 
-<script>
-// Ensure that the Chart.js library is loaded correctly
+<script type="text/javascript">
+// Log Data and Options
+console.log('Data:', {{ data|safe }});
+var options = {{ options|json_script:"options" }};
+console.log('Options:', options);
+
+// Check if Chart is defined
 if (typeof Chart === 'undefined') {
     console.error('Chart.js is not loaded');
 } else {
-    console.log('Data:', {{ data|safe }});
-    var options = {{ options|json_script:"options" }};
-    console.log('Options:', options);
-
+    // Get the context of the canvas element we want to select
     var ctx = document.getElementById('myChart').getContext('2d');
+    
+    // Create a new chart
     var myChart = new Chart(ctx, {
         type: 'bar',
         data: {{ data|safe }},
