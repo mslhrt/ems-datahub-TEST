@@ -4,16 +4,20 @@
 <canvas id="myChart" width="400" height="200"></canvas>
 
 <script>
-console.log('Data:', {{ data|safe }});
-// Use json_script filter to safely output options as JSON
-var options = {{ options|json_script:"options" }};
-console.log('Options:', options);
+// Ensure that the Chart.js library is loaded correctly
+if (typeof Chart === 'undefined') {
+    console.error('Chart.js is not loaded');
+} else {
+    console.log('Data:', {{ data|safe }});
+    var options = {{ options|json_script:"options" }};
+    console.log('Options:', options);
 
-var ctx = document.getElementById('myChart').getContext('2d');
-var myChart = new Chart(ctx, {
-    type: 'bar',
-    data: {{ data|safe }},
-    options: options  // Use the options variable here
-});
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {{ data|safe }},
+        options: options
+    });
+}
 </script>
 {% endblock %}
