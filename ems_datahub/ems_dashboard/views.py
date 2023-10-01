@@ -34,3 +34,24 @@ class CallDeleteView(DeleteView):
     
     def get_success_url(self):
         return reverse_lazy('ems_dashboard:list_calls')
+
+def dashboard(request):
+    data = {
+        'labels': ['January', 'February', 'March', 'April'],
+        'datasets': [{
+            'label': 'Number of Calls',
+            'data': [65, 59, 80, 81],
+            'backgroundColor': 'rgba(75, 192, 192, 0.2)',
+            'borderColor': 'rgba(75, 192, 192, 1)',
+            'borderWidth': 1
+        }]
+    }
+    options = {
+        'scales': {
+            'y': {
+                'beginAtZero': True
+            }
+        }
+    }
+    context = {'data': data, 'options': options}
+    return render(request, 'ems_dashboard/dashboard.html', context)
