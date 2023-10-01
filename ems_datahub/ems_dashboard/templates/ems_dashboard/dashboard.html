@@ -4,6 +4,9 @@
 <canvas id="myChart" width="400" height="200"></canvas>
 
 <script>
+console.log('Data:', {{ data|safe }});
+console.log('Options:', {{ options|safe }});
+
 var ctx = document.getElementById('myChart').getContext('2d');
 var myChart = new Chart(ctx, {
     type: 'bar',
