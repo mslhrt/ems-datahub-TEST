@@ -5,13 +5,15 @@
 
 <script>
 console.log('Data:', {{ data|safe }});
-console.log('Options:', {{ options|safe }});
+// Use json_script filter to safely output options as JSON
+var options = {{ options|json_script:"options" }};
+console.log('Options:', options);
 
 var ctx = document.getElementById('myChart').getContext('2d');
 var myChart = new Chart(ctx, {
     type: 'bar',
     data: {{ data|safe }},
-    options: {{ options|safe }}
+    options: options  // Use the options variable here
 });
 </script>
 {% endblock %}
