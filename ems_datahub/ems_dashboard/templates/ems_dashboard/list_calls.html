@@ -2,22 +2,27 @@
 
 {% block content %}
   <h2>Call List</h2>
-  <table>
+<table class="table table-bordered table-hover">
+  <thead>
     <tr>
-      <th>Date</th>
-      <th>Time</th>
-      <th>Type of Call</th>
-      <!-- Add other fields as needed -->
+      <th scope="col"><input type="checkbox" id="select-all" /></th> <!-- Checkbox to select all rows -->
+      <th scope="col">Date</th>
+      <th scope="col">Time</th>
+      <th scope="col">Type of Call</th>
+      <th scope="col">Actions</th>
     </tr>
+  </thead>
+  <tbody>
     {% for call in calls %}
-      <tr>
-        <td>{{ call.date|date:"m/d/Y" }}</td>
-        <td>{{ call.time|time:"H:i" }}</td>
-        <td>{{ call.type_of_call }}</td>
-        <!-- Add other fields as needed -->
-        <td><a href="{% url 'ems_dashboard:edit_call' call.id %}">Edit</a> | <a href="{% url 'ems_dashboard:delete_call' call.id %}">Delete</a></td>  <!-- Added pipe between Edit and Delete -->
-
-      </tr>
+    <tr>
+      <td><input type="checkbox" class="select-row" data-id="{{ call.id }}" /></td> <!-- Checkbox for each row -->
+      <td>{{ call.date }}</td>
+      <td>{{ call.time }}</td>
+      <td>{{ call.type_of_call }}</td>
+      <td><a href="{% url 'ems_dashboard:edit_call' call.id %}">Edit</a> | <a href="{% url 'ems_dashboard:delete_call' call.id %}">Delete</a></td>
+    </tr>
     {% endfor %}
-  </table>
+  </tbody>
+</table>
+<button id="bulk-delete" class="btn btn-danger">Delete Selected</button> <!-- Button to trigger bulk delete -->
 {% endblock %}
