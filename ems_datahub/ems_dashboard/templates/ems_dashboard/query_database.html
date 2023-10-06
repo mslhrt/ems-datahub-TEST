@@ -24,9 +24,13 @@
       <tbody>
           {% for row in query_results %}
               <tr>
-                  {% for value in row %}
-                      <td>{{ value }}</td>
-                  {% endfor %}
+                  {% if row|length == 1 %}  <!-- If there's only one column (i.e., an error message) -->
+                      <td colspan="{{ column_names|length }}">{{ row.0 }}</td>
+                  {% else %}
+                      {% for value in row %}
+                          <td>{{ value }}</td>
+                      {% endfor %}
+                  {% endif %}
               </tr>
           {% endfor %}
       </tbody>

@@ -82,7 +82,7 @@ def query_database(request):
                       query_results = cursor.fetchall()
                   except Exception as e:
                       # Handle the error, maybe return an error message to the user
-                      query_results = [f"Error executing query: {str(e)}"]
+                      query_results = [[f"Error executing query: {str(e)}"]]
           else:
               query_results = ["Only SELECT queries are allowed."]
         else:
