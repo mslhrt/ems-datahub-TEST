@@ -8,6 +8,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
+    {% load custom_filters %}
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" href="#">EMS DataHub</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -35,7 +36,7 @@
                 <!-- Add other navigation links as needed -->
             </ul>
             <ul class="navbar-nav ml-auto">
-                {% if user.is_authenticated %}
+                {% if user|has_group:"Query Executors" %}
                     <li class="nav-item">
                         <span class="navbar-text">Welcome, {{ user.first_name|default:user.username }}</span>
                     </li>
