@@ -5,6 +5,7 @@ from django.urls import reverse
 from django.urls import reverse_lazy
 from django.views.generic.edit import UpdateView
 from django.views.generic.edit import DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin
 import json
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.db import connection
@@ -25,8 +26,7 @@ def add_call(request):
         form = CallForm()
     return render(request, 'ems_dashboard/add_call.html', {'form': form})
 
-@login_required
-class CallUpdateView(UpdateView):
+class CallUpdateView(LoginRequiredMixin, UpdateView):
     model = Call
     form_class = CallForm
     template_name = 'ems_dashboard/edit_call.html'
@@ -34,8 +34,7 @@ class CallUpdateView(UpdateView):
     def get_success_url(self):
         return reverse_lazy('ems_dashboard:list_calls')
 
-@login_required
-class CallDeleteView(DeleteView):
+class CallDeleteView(LoginRequiredMixin, DeleteView):
     model = Call
     template_name = 'ems_dashboard/delete_call.html'
     
