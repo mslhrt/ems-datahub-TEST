@@ -71,19 +71,22 @@ def query_database(request):
     query_results = []
     query = ""
     if request.method == "POST":
-        query = request.POST.get('query')
-        # Ensure only SELECT queries for safety
-        if query.lower().strip().startswith("select"):
-            with connection.cursor() as cursor:
-                try:
-                    cursor.execute(query)
-                    column_names = [col[0] for col in cursor.description]
-                    query_results = cursor.fetchall()
-                except Exception as e:
-                    # Handle the error, maybe return an error message to the user
-                    query_results = [f"Error executing query: {str(e)}"]
+        if request.user.groups.filter(name='Query Executors').exists():
+          query = request.POST.get('query')
+          # Ensure only SELECT queries for safety
+          if query.lower().strip().startswith("select"):
+              with connection.cursor() as cursor:
+                  try:
+                      cursor.execute(query)
+                      column_names = [col[0] for col in cursor.description]
+                      query_results = cursor.fetchall()
+                  except Exception as e:
+                      # Handle the error, maybe return an error message to the user
+                      query_results = [f"Error executing query: {str(e)}"]
+          else:
+              query_results = ["Only SELECT queries are allowed."]
         else:
-            query_results = ["Only SELECT queries are allowed."]
+            query_results = ["You do not have permission to execute queries."]
     print(query_results)
     return render(request, 'ems_dashboard/query_database.html', {'column_names': column_names, 'query_results': query_results, 'query': query})
 
