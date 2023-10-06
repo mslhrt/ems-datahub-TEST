@@ -21,7 +21,7 @@
           </tr>
       </thead>
       <tbody>
-          {% for row in results %}
+          {% for row in query_results %}
               <tr>
                   {% for value in row %}
                       <td>{{ value }}</td>
@@ -30,5 +30,7 @@
           {% endfor %}
       </tbody>
   </table>
-
+$(document).ready(function() {
+    $('#queryResultsTable').DataTable();
+});
 {% endblock %}
