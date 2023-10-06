@@ -133,4 +133,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 LOGIN_URL = 'login'
-
+LOGIN_REDIRECT_URL = 'ems_dashboard:dashboard'
+LOGOUT_REDIRECT_URL = 'login'
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
