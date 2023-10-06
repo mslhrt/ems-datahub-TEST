@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, json
 from .models import Call
 from .forms import CallForm
 from django.urls import reverse
@@ -46,6 +46,7 @@ def dashboard(request):
             'borderWidth': 1
         }]
     }
+
     options = {
         'scales': {
             'y': {
@@ -53,5 +54,9 @@ def dashboard(request):
             }
         }
     }
-    context = {'data': data, 'options': options}
+
+    context = {
+        'data': json.dumps(data),
+        'options': json.dumps(options)
+    }
     return render(request, 'ems_dashboard/dashboard.html', context)
