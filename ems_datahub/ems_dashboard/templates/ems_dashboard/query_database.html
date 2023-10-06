@@ -12,25 +12,23 @@
   </form>
   
   <h3>Results:</h3>
-  <table class="table table-bordered table-hover">
-    <thead>
-      <tr>
-        <!-- Dynamic column headers based on results -->
-        {% if results %}
-          {% for column in results.0 %}
-            <th scope="col">{{ column }}</th>
+  <table id="queryResultsTable" class="table table-bordered table-hover">
+      <thead>
+          <tr>
+              {% for column_name in column_names %}
+                  <th>{{ column_name }}</th>
+              {% endfor %}
+          </tr>
+      </thead>
+      <tbody>
+          {% for row in results %}
+              <tr>
+                  {% for value in row %}
+                      <td>{{ value }}</td>
+                  {% endfor %}
+              </tr>
           {% endfor %}
-        {% endif %}
-      </tr>
-    </thead>
-    <tbody>
-      {% for row in results %}
-        <tr>
-          {% for cell in row %}
-            <td>{{ cell }}</td>
-          {% endfor %}
-        </tr>
-      {% endfor %}
-    </tbody>
+      </tbody>
   </table>
+
 {% endblock %}

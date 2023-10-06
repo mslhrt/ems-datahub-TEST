@@ -67,7 +67,8 @@ def dashboard(request):
 
 @user_passes_test(lambda u: u.is_superuser)
 def query_database(request):
-    results = []
+    column_names = []
+    query_results = []
     query = ""
     if request.method == "POST":
         query = request.POST.get('query')
@@ -76,10 +77,12 @@ def query_database(request):
             with connection.cursor() as cursor:
                 try:
                     cursor.execute(query)
-                    results = cursor.fetchall()
+                    column_names = [col[0] for col in cursor.description]
+                    query_results = cursor.fetchall()
                 except Exception as e:
                     # Handle the error, maybe return an error message to the user
-                    results = [f"Error executing query: {str(e)}"]
+                    query_results = [f"Error executing query: {str(e)}"]
         else:
-            results = ["Only SELECT queries are allowed."]
-    return render(request, 'ems_dashboard/query_database.html', {'results': results, 'query': query})
+            query_results = ["Only SELECT queries are allowed."]
+    return render(request, 'ems_dashboard/query_database.html', {'column_names': column_names, 'query_results': query_results, 'query': query})
+
