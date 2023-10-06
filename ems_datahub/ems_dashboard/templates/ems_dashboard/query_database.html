@@ -2,6 +2,7 @@
 
 {% block content %}
   <h2>Database Query Interface</h2>
+  <h3>*Advanced Users Only*</h3>
   <form method="post">
     {% csrf_token %}
     <div class="form-group">
@@ -30,7 +31,9 @@
           {% endfor %}
       </tbody>
   </table>
+<script>
 $(document).ready(function() {
     $('#queryResultsTable').DataTable();
 });
+</script>
 {% endblock %}
