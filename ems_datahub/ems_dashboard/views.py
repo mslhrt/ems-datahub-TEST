@@ -84,5 +84,6 @@ def query_database(request):
                     query_results = [f"Error executing query: {str(e)}"]
         else:
             query_results = ["Only SELECT queries are allowed."]
+    print(query_results)
     return render(request, 'ems_dashboard/query_database.html', {'column_names': column_names, 'query_results': query_results, 'query': query})
 
