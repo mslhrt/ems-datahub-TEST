@@ -1,10 +1,11 @@
-from django.shortcuts import render, redirect, json
+from django.shortcuts import render, redirect
 from .models import Call
 from .forms import CallForm
 from django.urls import reverse
 from django.urls import reverse_lazy
 from django.views.generic.edit import UpdateView
 from django.views.generic.edit import DeleteView
+import json
 
 def list_calls(request):
     calls = Call.objects.all().order_by('-date', '-time')  # Order by date and time in descending order
