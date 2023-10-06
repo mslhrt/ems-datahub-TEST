@@ -6,14 +6,15 @@ from django.urls import reverse_lazy
 from django.views.generic.edit import UpdateView
 from django.views.generic.edit import DeleteView
 import json
-from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import user_passes_test, login_required
 from django.db import connection
 
-
+@login_required
 def list_calls(request):
     calls = Call.objects.all().order_by('-date', '-time')  # Order by date and time in descending order
     return render(request, 'ems_dashboard/list_calls.html', {'calls': calls})
 
+@login_required
 def add_call(request):
     if request.method == 'POST':
         form = CallForm(request.POST)
@@ -24,6 +25,7 @@ def add_call(request):
         form = CallForm()
     return render(request, 'ems_dashboard/add_call.html', {'form': form})
 
+@login_required
 class CallUpdateView(UpdateView):
     model = Call
     form_class = CallForm
@@ -32,6 +34,7 @@ class CallUpdateView(UpdateView):
     def get_success_url(self):
         return reverse_lazy('ems_dashboard:list_calls')
 
+@login_required
 class CallDeleteView(DeleteView):
     model = Call
     template_name = 'ems_dashboard/delete_call.html'
@@ -65,6 +68,7 @@ def dashboard(request):
     }
     return render(request, 'ems_dashboard/dashboard.html', context)
 
+@login_required
 @user_passes_test(lambda u: u.is_superuser)
 def query_database(request):
     column_names = []
