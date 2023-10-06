@@ -6,6 +6,9 @@ from django.urls import reverse_lazy
 from django.views.generic.edit import UpdateView
 from django.views.generic.edit import DeleteView
 import json
+from django.contrib.auth.decorators import user_passes_test
+from django.db import connection
+
 
 def list_calls(request):
     calls = Call.objects.all().order_by('-date', '-time')  # Order by date and time in descending order
@@ -61,3 +64,22 @@ def dashboard(request):
         'options': json.dumps(options)
     }
     return render(request, 'ems_dashboard/dashboard.html', context)
+
+@user_passes_test(lambda u: u.is_superuser)
+def query_database(request):
+    results = []
+    query = ""
+    if request.method == "POST":
+        query = request.POST.get('query')
+        # Ensure only SELECT queries for safety
+        if query.lower().strip().startswith("select"):
+            with connection.cursor() as cursor:
+                try:
+                    cursor.execute(query)
+                    results = cursor.fetchall()
+                except Exception as e:
+                    # Handle the error, maybe return an error message to the user
+                    results = [f"Error executing query: {str(e)}"]
+        else:
+            results = ["Only SELECT queries are allowed."]
+    return render(request, 'ems_dashboard/query_database.html', {'results': results, 'query': query})
