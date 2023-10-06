@@ -25,12 +25,20 @@
                     <a class="nav-link" href="{% url 'ems_dashboard:add_call' %}">Add Call</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'ems_dashboard:query_database' %}">Query Database</a>
-                </li>
-                <li class="nav-item">
                     <a class="nav-link" href="{% url 'admin:index' %}">Admin</a>
-                </li>                
+                </li>
                 <!-- Add other navigation links as needed -->
+            </ul>
+            <ul class="navbar-nav ml-auto">
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">Login</a>
+                    </li>
+                {% endif %}
             </ul>
         </div>
     </nav>
