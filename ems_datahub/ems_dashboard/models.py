@@ -44,3 +44,12 @@ class Town(models.Model):
 
     def __str__(self):
         return self.get_name_display()
+
+class SavedQuery(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    query = models.TextField()
+    name = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
