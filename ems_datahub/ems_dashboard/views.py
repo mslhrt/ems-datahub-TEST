@@ -107,48 +107,60 @@ def query_database(request):
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
 def bulk_import(request):
+    successful_rows = 0
+    failed_rows = 0
+    error_messages = []
+
     if request.method == 'POST':
         form = DataImportForm(request.POST, request.FILES)
         if form.is_valid():
-            # Process the uploaded file
             csv_file = TextIOWrapper(request.FILES['data_file'].file, encoding='utf-8')
             reader = csv.DictReader(csv_file)
             
-            # Header validation
             expected_headers = ["Date", "Time", "Type of Call", "Responders Count", "Medic Intercept", "Transport Type", "CPR DOS", "Agency Name", "Town Name"]
             if set(reader.fieldnames) != set(expected_headers):
                 messages.error(request, "CSV headers do not match the expected format. Please use the template CSV.")
                 return redirect('ems_dashboard:bulk_import')
             
             for row in reader:
-                # Handle the full-text fields
                 try:
                     town = Town.objects.get(name=row['Town Name'])
                     agency = Agency.objects.get(name=row['Agency Name'])
-                except (Town.DoesNotExist, Agency.DoesNotExist):
-                    messages.error(request, f"Error: Town or Agency not found for row: {row}")
-                    continue  # Skip this row and continue with the next
-                
-                # Map CSV columns to Call model fields
-                call_data = {
-                    'date': row['Date'],
-                    'time': row['Time'],
-                    'type_of_call': row['Type of Call'],
-                    'responders_count': int(row['Responders Count']),
-                    'medic_intercept': row['Medic Intercept'] == 'True',
-                    'intercept_agency': agency,
-                    'transport_type': row['Transport Type'],
-                    'cpr_dos': row['CPR DOS'] == 'True',
-                    'town': town
-                }
+                    
+                    # Map CSV columns to Call model fields
+                    call_data = {
+                        'date': row['Date'],
+                        'time': row['Time'],
+                        'type_of_call': row['Type of Call'],
+                        'responders_count': int(row['Responders Count']),
+                        'medic_intercept': row['Medic Intercept'] == 'True',
+                        'intercept_agency': agency,
+                        'transport_type': row['Transport Type'],
+                        'cpr_dos': row['CPR DOS'] == 'True',
+                        'town': town
+                    }
 
-                # Create the Call object
-                Call.objects.create(**call_data)
-            
-            return redirect('ems_dashboard:list_calls')  # or wherever you want to redirect after import
+                    # Create the Call object
+                    Call.objects.create(**call_data)
+                    successful_rows += 1
+
+                except (Town.DoesNotExist, Agency.DoesNotExist):
+                    failed_rows += 1
+                    error_messages.append(f"Error: Town or Agency not found for row: {row}")
+                except Exception as e:
+                    failed_rows += 1
+                    error_messages.append(f"Error for row {row}: {str(e)}")
+
+            messages.success(request, f"{successful_rows} rows were successfully added.")
+            if failed_rows:
+                messages.warning(request, f"{failed_rows} rows were skipped. Check the error log for details.")
+                # You can save error_messages to a log file or database for further inspection.
+
+            return redirect('ems_dashboard:list_calls')
     else:
         form = DataImportForm()
     return render(request, 'ems_dashboard/bulk_import.html', {'form': form})
+
 
 
 @login_required
