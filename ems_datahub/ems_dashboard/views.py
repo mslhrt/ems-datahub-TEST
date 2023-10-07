@@ -12,6 +12,8 @@ from django.db import connection
 import csv
 from io import TextIOWrapper
 from django.http import HttpResponse
+from django.contrib import messages
+from .models import Town, Agency
 
 @login_required
 def list_calls(request):
@@ -101,6 +103,7 @@ def query_database(request):
     print(query_results)
     return render(request, 'ems_dashboard/query_database.html', {'column_names': column_names, 'query_results': query_results, 'query': query, 'tables': tables})
 
+
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
 def bulk_import(request):
@@ -110,11 +113,29 @@ def bulk_import(request):
             # Process the uploaded file
             csv_file = TextIOWrapper(request.FILES['data_file'].file, encoding='utf-8')
             reader = csv.DictReader(csv_file)
+            
+            # Header validation
+            expected_headers = ["Date", "Time", "Type of Call", "Responders Count", "Medic Intercept", "Transport Type", "CPR DOS", "Agency Name", "Town Name"]
+            if set(reader.fieldnames) != set(expected_headers):
+                messages.error(request, "CSV headers do not match the expected format. Please use the template CSV.")
+                return redirect('ems_dashboard:bulk_import')
+            
             for row in reader:
+                # Handle the full-text fields
+                try:
+                    town = Town.objects.get(name=row['Town Name'])
+                    agency = Agency.objects.get(name=row['Agency Name'])
+                    row['town_id'] = town.id
+                    row['intercept_agency_id'] = agency.id
+                    del row['Town Name']  # Remove the original text fields from the row
+                    del row['Agency Name']
+                except (Town.DoesNotExist, Agency.DoesNotExist):
+                    messages.error(request, f"Error: Town or Agency not found for row: {row}")
+                    continue  # Skip this row and continue with the next
+                
                 # Convert the row dictionary to match the fields of your Call model
-                # If the CSV headers exactly match the model fields, you can directly use row
-                # Otherwise, you might need to adjust the keys in the row dictionary
                 Call.objects.create(**row)
+            
             return redirect('ems_dashboard:list_calls')  # or wherever you want to redirect after import
     else:
         form = DataImportForm()
