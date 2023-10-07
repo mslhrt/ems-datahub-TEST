@@ -125,21 +125,31 @@ def bulk_import(request):
                 try:
                     town = Town.objects.get(name=row['Town Name'])
                     agency = Agency.objects.get(name=row['Agency Name'])
-                    row['town_id'] = town.id
-                    row['intercept_agency_id'] = agency.id
-                    del row['Town Name']  # Remove the original text fields from the row
-                    del row['Agency Name']
                 except (Town.DoesNotExist, Agency.DoesNotExist):
                     messages.error(request, f"Error: Town or Agency not found for row: {row}")
                     continue  # Skip this row and continue with the next
                 
-                # Convert the row dictionary to match the fields of your Call model
-                Call.objects.create(**row)
+                # Map CSV columns to Call model fields
+                call_data = {
+                    'date': row['Date'],
+                    'time': row['Time'],
+                    'type_of_call': row['Type of Call'],
+                    'responders_count': int(row['Responders Count']),
+                    'medic_intercept': row['Medic Intercept'] == 'True',
+                    'intercept_agency': agency,
+                    'transport_type': row['Transport Type'],
+                    'cpr_dos': row['CPR DOS'] == 'True',
+                    'town': town
+                }
+
+                # Create the Call object
+                Call.objects.create(**call_data)
             
             return redirect('ems_dashboard:list_calls')  # or wherever you want to redirect after import
     else:
         form = DataImportForm()
     return render(request, 'ems_dashboard/bulk_import.html', {'form': form})
+
 
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
