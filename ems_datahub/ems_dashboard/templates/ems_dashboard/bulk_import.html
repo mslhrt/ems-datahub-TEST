@@ -3,7 +3,7 @@
 
 {% block content %}
 <h2>Bulk Import</h2>
-<p>Download the <a href="{% static 'call_template.csv' %}" download>Call Template CSV</a> to ensure correct formatting.</p>
+<p>Download the <a href="{% static 'ems_dashboard/call_template.csv' %}" download>Call Template CSV</a> to ensure correct formatting.</p>
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}
