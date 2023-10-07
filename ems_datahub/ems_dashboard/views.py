@@ -11,6 +11,7 @@ from django.contrib.auth.decorators import user_passes_test, login_required
 from django.db import connection
 import csv
 from io import TextIOWrapper
+from django.http import HttpResponse
 
 @login_required
 def list_calls(request):
@@ -84,6 +85,7 @@ def query_database(request):
           query = request.POST.get('query')
           # Ensure only SELECT queries for safety
           if query.lower().strip().startswith("select"):
+              request.session['last_executed_query'] = query
               with connection.cursor() as cursor:
                   try:
                       cursor.execute(query)
@@ -117,3 +119,27 @@ def bulk_import(request):
     else:
         form = DataImportForm()
     return render(request, 'ems_dashboard/bulk_import.html', {'form': form})
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def export_query_result(request):
+    # Get the last executed query from the session
+    query = request.session.get('last_executed_query', None)
+    if not query:
+        return HttpResponse("No query result to export.", content_type="text/plain")
+
+    # Execute the query and fetch results
+    with connection.cursor() as cursor:
+        cursor.execute(query)
+        column_names = [col[0] for col in cursor.description]
+        query_results = cursor.fetchall()
+
+    # Create a CSV response
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="query_result.csv"'
+    writer = csv.writer(response)
+    writer.writerow(column_names)
+    for row in query_results:
+        writer.writerow(row)
+
+    return response

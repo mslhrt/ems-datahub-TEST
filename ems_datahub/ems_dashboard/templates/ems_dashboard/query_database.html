@@ -14,6 +14,7 @@
                     <textarea class="form-control" id="query" name="query" rows="5">{{ query }}</textarea>
                 </div>
                 <button type="submit" class="btn btn-primary">Execute</button>
+                <a href="{% url 'ems_dashboard:export_query_result' %}" class="btn btn-secondary">Export Result as CSV</a>
             </form>
             
             <h3>Results:</h3>
