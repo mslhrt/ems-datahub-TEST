@@ -7,6 +7,29 @@
         <div class="col-md-8">
             <h2>Database Query Interface</h2>
             <h3>*Advanced Users Only*</h3>
+            
+            <!-- Dropdown for past queries -->
+            <div class="form-group">
+                <label for="pastQueries">Past Queries:</label>
+                <select class="form-control" id="pastQueries" onchange="document.getElementById('query').value = this.value;">
+                    <option value="">-- Select a past query --</option>
+                    {% for past_query in past_queries %}
+                        <option value="{{ past_query }}">{{ past_query|truncatechars:50 }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Dropdown for saved queries -->
+            <div class="form-group">
+                <label for="savedQueries">Saved Queries:</label>
+                <select class="form-control" id="savedQueries" onchange="document.getElementById('query').value = this.value;">
+                    <option value="">-- Select a saved query --</option>
+                    {% for saved_query in saved_queries %}
+                        <option value="{{ saved_query.query }}">{{ saved_query.query|truncatechars:50 }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
             <form method="post">
                 {% csrf_token %}
                 <div class="form-group">
@@ -14,6 +37,7 @@
                     <textarea class="form-control" id="query" name="query" rows="5">{{ query }}</textarea>
                 </div>
                 <button type="submit" class="btn btn-primary">Execute</button>
+                <button type="submit" name="save_query" class="btn btn-secondary">Save Query</button>
                 <a href="{% url 'ems_dashboard:export_query_result' %}" class="btn btn-secondary">Export Result as CSV</a>
             </form>
             

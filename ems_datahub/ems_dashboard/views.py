@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Call
+from .models import Call, SavedQuery
 from .forms import CallForm, DataImportForm
 from django.urls import reverse
 from django.urls import reverse_lazy
@@ -14,6 +14,7 @@ from io import TextIOWrapper
 from django.http import HttpResponse
 from django.contrib import messages
 from .models import Town, Agency
+import re
 
 @login_required
 def list_calls(request):
@@ -82,26 +83,48 @@ def query_database(request):
     # Fetching table names
     tables = connection.introspection.table_names()
 
+    # Fetch the last 5-10 queries from the session
+    past_queries = request.session.get('past_queries', [])
+
+    # Fetch saved queries for the user
+    saved_queries = SavedQuery.objects.filter(user=request.user)
+
     if request.method == "POST":
         if request.user.groups.filter(name='Query Executors').exists():
-          query = request.POST.get('query')
-          # Ensure only SELECT queries for safety
-          if query.lower().strip().startswith("select"):
-              request.session['last_executed_query'] = query
-              with connection.cursor() as cursor:
-                  try:
-                      cursor.execute(query)
-                      column_names = [col[0] for col in cursor.description]
-                      query_results = cursor.fetchall()
-                  except Exception as e:
-                      # Handle the error, maybe return an error message to the user
-                      query_results = [[f"Error executing query: {str(e)}"]]
-          else:
-              query_results = ["Only SELECT queries are allowed."]
+            query = request.POST.get('query')
+            
+            # Ensure only SELECT queries for safety using regex
+            if re.match(r'^\s*select', query, re.I) and not re.search(r'\b(update|delete|insert|drop|alter|create)\b', query, re.I):
+                # Append the query to past_queries and ensure it doesn't exceed 10 items
+                past_queries.append(query)
+                past_queries = past_queries[-10:]
+                request.session['past_queries'] = past_queries
+
+                with connection.cursor() as cursor:
+                    try:
+                        cursor.execute(query)
+                        column_names = [col[0] for col in cursor.description]
+                        query_results = cursor.fetchall()
+                    except Exception as e:
+                        query_results = [[f"Error executing query: {str(e)}"]]
+            else:
+                query_results = ["Only SELECT queries are allowed."]
+            
+            # Handle saving a query if the "Save Query" button is clicked
+            if 'save_query' in request.POST:
+                SavedQuery.objects.create(user=request.user, query=query)
+
         else:
             query_results = ["You do not have permission to execute queries."]
-    print(query_results)
-    return render(request, 'ems_dashboard/query_database.html', {'column_names': column_names, 'query_results': query_results, 'query': query, 'tables': tables})
+
+    return render(request, 'ems_dashboard/query_database.html', {
+        'column_names': column_names, 
+        'query_results': query_results, 
+        'query': query, 
+        'tables': tables,
+        'past_queries': past_queries,
+        'saved_queries': saved_queries
+    })
 
 
 @login_required
