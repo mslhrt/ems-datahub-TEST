@@ -107,12 +107,12 @@ def bulk_import(request):
         if form.is_valid():
             # Process the uploaded file
             csv_file = TextIOWrapper(request.FILES['data_file'].file, encoding='utf-8')
-            reader = csv.reader(csv_file)
-            # Skip the header row
-            next(reader)
+            reader = csv.DictReader(csv_file)
             for row in reader:
-                # Assuming the CSV has columns: date, time, ... (match the fields of your Call model)
-                Call.objects.create(date=row[0], time=row[1], ...)
+                # Convert the row dictionary to match the fields of your Call model
+                # If the CSV headers exactly match the model fields, you can directly use row
+                # Otherwise, you might need to adjust the keys in the row dictionary
+                Call.objects.create(**row)
             return redirect('ems_dashboard:list_calls')  # or wherever you want to redirect after import
     else:
         form = DataImportForm()
