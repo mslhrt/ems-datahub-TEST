@@ -73,6 +73,10 @@ def query_database(request):
     column_names = []
     query_results = []
     query = ""
+    
+    # Fetching table names
+    tables = connection.introspection.table_names()
+
     if request.method == "POST":
         if request.user.groups.filter(name='Query Executors').exists():
           query = request.POST.get('query')
@@ -91,5 +95,6 @@ def query_database(request):
         else:
             query_results = ["You do not have permission to execute queries."]
     print(query_results)
-    return render(request, 'ems_dashboard/query_database.html', {'column_names': column_names, 'query_results': query_results, 'query': query})
+    return render(request, 'ems_dashboard/query_database.html', {'column_names': column_names, 'query_results': query_results, 'query': query, 'tables': tables})
+
 

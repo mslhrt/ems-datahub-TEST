@@ -1,43 +1,65 @@
 {% extends 'ems_dashboard/base_generic.html' %}
 
 {% block content %}
-  <h2>Database Query Interface</h2>
-  <h3>*Advanced Users Only*</h3>
-  <form method="post">
-    {% csrf_token %}
-    <div class="form-group">
-      <label for="query">SQL Query:</label>
-      <textarea class="form-control" id="query" name="query" rows="5">{{ query }}</textarea>
+<div class="container mt-4">
+    <div class="row">
+        <!-- SQL Query Box and Results -->
+        <div class="col-md-8">
+            <h2>Database Query Interface</h2>
+            <h3>*Advanced Users Only*</h3>
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="query">SQL Query:</label>
+                    <textarea class="form-control" id="query" name="query" rows="5">{{ query }}</textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Execute</button>
+            </form>
+            
+            <h3>Results:</h3>
+            <table id="queryResultsTable" class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        {% for column_name in column_names %}
+                            <th>{{ column_name }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in query_results %}
+                        <tr>
+                            {% if row|length == 1 %}  <!-- If there's only one column (i.e., an error message) -->
+                                <td colspan="{{ column_names|length }}">{{ row.0 }}</td>
+                            {% else %}
+                                {% for value in row %}
+                                    <td>{{ value }}</td>
+                                {% endfor %}
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <script>
+            $(document).ready(function() {
+                $('#queryResultsTable').DataTable();
+            });
+            </script>
+        </div>
+
+        <!-- Database Hierarchy Panel -->
+        <div class="col-md-4">
+            <h4>Database Hierarchy</h4>
+            <ul>
+                <li>Tables
+                    <ul>
+                        {% for table in tables %}
+                            <li>{{ table }}</li>
+                        {% endfor %}
+                    </ul>
+                </li>
+                <!-- You can expand this section to include other hierarchy items like Schemas, Functions, etc. -->
+            </ul>
+        </div>
     </div>
-    <button type="submit" class="btn btn-primary">Execute</button>
-  </form>
-  
-  <h3>Results:</h3>
-  <table id="queryResultsTable" class="table table-bordered table-hover">
-      <thead>
-          <tr>
-              {% for column_name in column_names %}
-                  <th>{{ column_name }}</th>
-              {% endfor %}
-          </tr>
-      </thead>
-      <tbody>
-          {% for row in query_results %}
-              <tr>
-                  {% if row|length == 1 %}  <!-- If there's only one column (i.e., an error message) -->
-                      <td colspan="{{ column_names|length }}">{{ row.0 }}</td>
-                  {% else %}
-                      {% for value in row %}
-                          <td>{{ value }}</td>
-                      {% endfor %}
-                  {% endif %}
-              </tr>
-          {% endfor %}
-      </tbody>
-  </table>
-<script>
-$(document).ready(function() {
-    $('#queryResultsTable').DataTable();
-});
-</script>
+</div>
 {% endblock %}
