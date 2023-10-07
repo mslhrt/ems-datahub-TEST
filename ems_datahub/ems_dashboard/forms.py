@@ -1,5 +1,5 @@
 from django import forms
-from .models import Call, Agency, Town
+from .models import Call
 
 class CallForm(forms.ModelForm):
     class Meta:
@@ -9,3 +9,6 @@ class CallForm(forms.ModelForm):
             'date': forms.DateInput(attrs={'type': 'date'}),
             'time': forms.TimeInput(attrs={'type': 'time'}),
         }
+
+class DataImportForm(forms.Form):
+    data_file = forms.FileField(label='Select a file')

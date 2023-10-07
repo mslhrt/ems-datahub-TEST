@@ -26,10 +26,17 @@
                     <a class="nav-link" href="{% url 'ems_dashboard:add_call' %}">Add Call</a>
                 </li>
               {% if user.is_superuser or user|has_group:"Query Executors" %}
-                <li class="nav-item">
-                  <a class="nav-link" href="{% url 'ems_dashboard:query_database' %}">Query Database</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="dbFunctionsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        DB Functions
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="dbFunctionsDropdown">
+                        <a class="dropdown-item" href="{% url 'ems_dashboard:query_database' %}">Query Database</a>
+                        <a class="dropdown-item" href="{% url 'ems_dashboard:bulk_import' %}">Bulk Import</a>
+                    </div>
                 </li>
               {% endif %}
+
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'admin:index' %}">Admin</a>
                 </li>

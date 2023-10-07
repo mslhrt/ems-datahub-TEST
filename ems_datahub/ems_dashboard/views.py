@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from .models import Call
-from .forms import CallForm
+from .forms import CallForm, DataImportForm
 from django.urls import reverse
 from django.urls import reverse_lazy
 from django.views.generic.edit import UpdateView
@@ -9,6 +9,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 import json
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.db import connection
+import csv
+from io import TextIOWrapper
 
 @login_required
 def list_calls(request):
@@ -97,4 +99,21 @@ def query_database(request):
     print(query_results)
     return render(request, 'ems_dashboard/query_database.html', {'column_names': column_names, 'query_results': query_results, 'query': query, 'tables': tables})
 
-
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def bulk_import(request):
+    if request.method == 'POST':
+        form = DataImportForm(request.POST, request.FILES)
+        if form.is_valid():
+            # Process the uploaded file
+            csv_file = TextIOWrapper(request.FILES['data_file'].file, encoding='utf-8')
+            reader = csv.reader(csv_file)
+            # Skip the header row
+            next(reader)
+            for row in reader:
+                # Assuming the CSV has columns: date, time, ... (match the fields of your Call model)
+                Call.objects.create(date=row[0], time=row[1], ...)
+            return redirect('ems_dashboard:list_calls')  # or wherever you want to redirect after import
+    else:
+        form = DataImportForm()
+    return render(request, 'ems_dashboard/bulk_import.html', {'form': form})
