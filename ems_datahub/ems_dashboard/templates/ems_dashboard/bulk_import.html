@@ -21,9 +21,9 @@
                 </button>
             </div>
             <div class="modal-body">
-                {% messages %}
+                {% for message in messages %}
                     <p>{{ message }}</p>
-                {% endmessages %}
+                {% endfor %}
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
