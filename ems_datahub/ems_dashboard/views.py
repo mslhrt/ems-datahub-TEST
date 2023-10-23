@@ -209,3 +209,15 @@ def export_query_result(request):
         writer.writerow(row)
 
     return response
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def major_db_functions(request):
+  return render(request, 'ems_dashboard/major_db_functions.html')
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def reset_call_table(request):
+  Call.objects.all().delete()
+  messages.success(request, 'Call table has been reset successfully.')
+  return redirect('ems_dashboard:major_db_functions')

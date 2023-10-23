@@ -1,0 +1,38 @@
+{% extends 'ems_dashboard/base_generic.html' %}
+
+{% block content %}
+<h2>Major DB Functions</h2>
+<p>Be cautious while using these functions as they can modify the database content.</p>
+<button id="resetCallTable" class="btn btn-danger">Reset Call Table</button>
+
+<!-- Bootstrap Modal for confirmation -->
+<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmModalLabel">Confirm Reset</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to reset the call table?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <a href="{% url 'ems_dashboard:reset_call_table' %}" class="btn btn-danger">Confirm</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript to trigger the modal for confirmation -->
+<script>
+    $(document).ready(function() {
+        $('#resetCallTable').click(function() {
+            $('#confirmModal').modal('show');
+        });
+    });
+</script>
+
+{% endblock %}

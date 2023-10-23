@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import list_calls, add_call, CallUpdateView, CallDeleteView, dashboard, query_database, bulk_import, export_query_result  # Import views
+from .views import list_calls, add_call, CallUpdateView, CallDeleteView, dashboard, query_database, bulk_import, export_query_result, major_db_functions, reset_call_table  # Import views
 
 app_name = 'ems_dashboard'
 
@@ -12,4 +12,6 @@ urlpatterns = [
     path('query_database/', query_database, name='query_database'),  # Database Query View
     path('bulk_import/', bulk_import, name='bulk_import'),
     path('export_query_result/', export_query_result, name='export_query_result'),
+    path('major_db_functions/', major_db_functions, name='major_db_functions'),
+    path('reset_call_table/', reset_call_table, name='reset_call_table'),
 ]
