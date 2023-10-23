@@ -7,4 +7,17 @@
     {{ form.as_p }}
     <button type="submit">Save</button>
   </form>
+
+<script>
+document.querySelector("form").addEventListener("submit", function(event){
+    let currentDate = new Date();
+    let inputDate = new Date(document.getElementById("id_date").value + "T" + document.getElementById("id_time").value);
+
+    if(inputDate > currentDate){
+        alert("The date/time cannot be in the future.");
+        event.preventDefault();
+    }
+});
+</script>
+
 {% endblock %}
